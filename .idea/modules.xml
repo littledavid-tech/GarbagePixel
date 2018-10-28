@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GarbagePixel.iml" filepath="$PROJECT_DIR$/GarbagePixel.iml" />
+      <module fileurl="file://F:\MyCode\Android\GarbagePixel\GarbagePixel.iml" filepath="F:\MyCode\Android\GarbagePixel\GarbagePixel.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://F:\MyCode\Android\GarbagePixel\app\app.iml" filepath="F:\MyCode\Android\GarbagePixel\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/garbagepixellib/garbagepixellib.iml" filepath="$PROJECT_DIR$/garbagepixellib/garbagepixellib.iml" />
+      <module fileurl="file://F:\MyCode\Android\GarbagePixel\garbagepixellib\garbagepixellib.iml" filepath="F:\MyCode\Android\GarbagePixel\garbagepixellib\garbagepixellib.iml" />
     </modules>
   </component>
 </project>

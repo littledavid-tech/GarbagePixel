@@ -3,10 +3,7 @@ package cn.shycoder.garbagepixel.lib
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Environment
-import android.renderscript.RSRuntimeException
 import android.support.v4.util.LruCache
-import cn.shycoder.garbagepixel.lib.utils.safeClose
 import com.jakewharton.disklrucache.DiskLruCache
 import java.io.File
 import java.io.InputStream
@@ -27,11 +24,11 @@ class Cache(context: Context) {
      * 内存缓存的默认最大大小 最大可用内存的 1/8
      * 单位为字节
      * */
-    private val DEFAULT_MOMORY_CACHE_SIZE = (Runtime.getRuntime().maxMemory() / 8 / 1024).toInt()
+    private val DEFAULT_MEMORY_CACHE_SIZE = (Runtime.getRuntime().maxMemory() / 8 / 1024).toInt()
 
-    val mApplicationContext = context.applicationContext
+    private val mApplicationContext = context.applicationContext!!
 
-    var mLruCache = object : LruCache<String, Bitmap>(DEFAULT_MOMORY_CACHE_SIZE) {
+    var mLruCache = object : LruCache<String, Bitmap>(DEFAULT_MEMORY_CACHE_SIZE) {
         override fun sizeOf(key: String?, value: Bitmap?): Int {
             return value!!.rowBytes * value.height / 1024
         }
@@ -40,15 +37,15 @@ class Cache(context: Context) {
     var mDiskLruCache: DiskLruCache
 
     init {
-        //创建缓存目录
-        val file = File(mApplicationContext.externalCacheDir, "cache")
+        //创建缓存目录，位于data/data下
+        val file = File(mApplicationContext.cacheDir, "bitmaps_cache")
         if (!file.exists()) {
             file.mkdir()
         }
         //初始化磁盘缓存
         mDiskLruCache = DiskLruCache.open(file, 1, 1, DEFAULT_DISK_CACHE_SIZE)
     }
-    
+
     /**
      * 将Bitmap放入缓存中
      * @param key Key
