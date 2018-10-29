@@ -4,7 +4,10 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v4.util.LruCache
+import cn.shycoder.garbagepixel.lib.utils.safeClose
 import com.jakewharton.disklrucache.DiskLruCache
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.InputStream
 
@@ -28,13 +31,13 @@ class Cache(context: Context) {
 
     private val mApplicationContext = context.applicationContext!!
 
-    var mLruCache = object : LruCache<String, Bitmap>(DEFAULT_MEMORY_CACHE_SIZE) {
+    private var mLruCache = object : LruCache<String, Bitmap>(DEFAULT_MEMORY_CACHE_SIZE) {
         override fun sizeOf(key: String?, value: Bitmap?): Int {
             return value!!.rowBytes * value.height / 1024
         }
     }
 
-    var mDiskLruCache: DiskLruCache
+    private var mDiskLruCache: DiskLruCache
 
     init {
         //创建缓存目录，位于data/data下
@@ -52,7 +55,27 @@ class Cache(context: Context) {
      * @param Bitmap 的输入流
      * */
     fun put(key: String, inputStream: InputStream) {
-        TODO()
+        val editor = mDiskLruCache.edit(key)
+        try {
+            val bufferedInputStream = BufferedInputStream(inputStream)
+            val bufferedOutputStream = BufferedOutputStream(editor.newOutputStream(DEFAULT_SNAPSHOT_INDEX))
+            val byteArray = ByteArray(1024)
+
+            var len = bufferedInputStream.read(byteArray)
+            while (len > -1) {
+                bufferedOutputStream.write(byteArray, 0, len)
+                len = bufferedInputStream.read(byteArray)
+            }
+
+            bufferedInputStream.safeClose()
+            bufferedOutputStream.safeClose()
+
+            editor.commit()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        } finally {
+            mDiskLruCache.flush()
+        }
     }
 
     /**

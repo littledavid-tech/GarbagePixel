@@ -17,10 +17,12 @@ class Request private constructor(
 
     private val TAG = Request::class.qualifiedName
 
+    val bitmapKey: BitmapKey = generateKey()
+
     /**
      * 生成一个唯一标识的Key
      * */
-    fun generateKey(): BitmapKey {
+    private fun generateKey(): BitmapKey {
         val buffer = StringBuffer()
         //标识
         val originalKey = MD5Utils.decodeMD5(source.toString())

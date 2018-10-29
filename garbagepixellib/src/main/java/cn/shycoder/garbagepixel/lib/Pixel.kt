@@ -34,7 +34,7 @@ class Pixel private constructor(val context: Context, val executor: ThreadPoolEx
     val mTargetActionMap: WeakHashMap<ImageView, Action> = WeakHashMap()
 
 
-    fun from(url: URL): Request.RequestBuilder {
+    fun from(url: String): Request.RequestBuilder {
         return Request.RequestBuilder(this, url)
     }
 
