@@ -48,7 +48,7 @@ class Cache(context: Context) {
 
     /**
      * 将Bitmap放入缓存中
-     * @param key Key
+     * @param key BitmapKey
      * @param Bitmap 的输入流
      * */
     fun put(key: String, inputStream: InputStream) {

@@ -6,21 +6,23 @@ import android.app.Fragment
 import android.content.Context
 import android.os.Looper
 import android.os.Message
+import android.support.v4.app.NotificationCompatBase
 import android.widget.ImageView
 import java.net.URL
+import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
 
-class Pixel private constructor(private val mAppliationContext: Context, val executor: Executor, val cache: Cache) {
+class Pixel private constructor(val context: Context, val executor: ThreadPoolExecutor, val cache: Cache) {
 
     /**
      * 运行于 UI 线程的Handler
      * Bitmap将会通过此Handler更新到ImageView上
      * */
-    val HANDLER = object : android.os.Handler(Looper.getMainLooper()) {
+    private val HANDLER = object : android.os.Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message?) {
             super.handleMessage(msg)
         }
@@ -29,14 +31,19 @@ class Pixel private constructor(private val mAppliationContext: Context, val exe
     /**
      * ImageView 和 Action的映射
      * */
-    val mTargetActionMap: Map<ImageView, Action> = hashMapOf()
+    val mTargetActionMap: WeakHashMap<ImageView, Action> = WeakHashMap()
 
 
-    fun from(url: URL) {
-
+    fun from(url: URL): Request.RequestBuilder {
+        return Request.RequestBuilder(this, url)
     }
 
-    fun from(resId: Int) {
+    fun from(resId: Int): Request.RequestBuilder {
+        return Request.RequestBuilder(this, resId)
+    }
+
+    fun isDebugging(): Boolean {
+        return true
     }
 
     companion object {
