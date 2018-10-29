@@ -32,7 +32,7 @@ internal class Dispatcher(
         mHandler.sendMessage(mHandler.obtainMessage(MSG_TASK_SUBMIT, action))
     }
 
-    fun dispatchCompelelate(action: Action) {
+    fun dispatchComplete(bitmapProcessor: BitmapProcessor) {
 
     }
 
@@ -41,7 +41,15 @@ internal class Dispatcher(
      * @param action Action
      * @param exception 异常对象
      * */
-    fun dispatchFailed(action: Action) {
+    fun dispatchFailed(bitmapProcessor: BitmapProcessor) {
+
+    }
+
+    fun performSubmit(action: Action) {
+
+    }
+
+    fun performCompla(bitmapProcessor: BitmapProcessor) {
 
     }
 

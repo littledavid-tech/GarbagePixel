@@ -6,10 +6,7 @@ import android.graphics.BitmapFactory
 import android.support.v4.util.LruCache
 import cn.shycoder.garbagepixel.lib.utils.safeClose
 import com.jakewharton.disklrucache.DiskLruCache
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.InputStream
+import java.io.*
 
 /**
  * Created by ITSoftware on 10/27/2018.
@@ -76,6 +73,12 @@ class Cache(context: Context) {
         } finally {
             mDiskLruCache.flush()
         }
+    }
+
+    fun put(key: String, bitmap: Bitmap) {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        put(key, ByteArrayInputStream(byteArrayOutputStream.toByteArray()))
     }
 
     /**

@@ -1,6 +1,9 @@
 package cn.shycoder.garbagepixel.lib
 
 import android.graphics.Bitmap
+import cn.shycoder.garbagepixel.lib.utils.ImageResizer
+import cn.shycoder.garbagepixel.lib.utils.safeClose
+import java.io.FileInputStream
 
 /**
  * Bitmap的处理者
@@ -20,12 +23,13 @@ internal abstract class BitmapProcessor(
             result = loadBitmap()
             //加载Bitmap失败
             if (result == null) {
-                dispatcher.dispatchFailed(action)
+                dispatcher.dispatchFailed(this)
             } else {
-                dispatcher.dispatchCompelelate(action)
+                dispatcher.dispatchComplete(this)
             }
         } catch (ex: Exception) {
             exception = ex
+            dispatcher.dispatchFailed(this)
         }
     }
 
@@ -40,15 +44,25 @@ internal abstract class BitmapProcessor(
         //从内存中取出Bitmap
         bitmap = cache.get(bitmapKey.processedKey)
         if (bitmap == null) {
-            return null
+            //检查缓存中是否具有原图
+            if (cache.isExistedInDiskCache(bitmapKey.originalKey)) {
+                //根据原图加载缩略图
+                val fileInputStream = FileInputStream(cache.toString())
+                val fd = fileInputStream.fd
+                val inSampledBitmap = ImageResizer.fromFileDescriptor(fd, request.requestWidth, request.requestHeight)
+                cache.put(request.bitmapKey.originalKey, inSampledBitmap)
+                fileInputStream.safeClose()
+                return inSampledBitmap
+            }
         }
-        return null
+        return decode()
     }
 
     abstract fun decode(): Bitmap?
 
     companion object {
         fun create(pixel: Pixel, dispatcher: Dispatcher, action: Action, request: Request): BitmapProcessor {
+//            if (action)
             TODO()
         }
     }
