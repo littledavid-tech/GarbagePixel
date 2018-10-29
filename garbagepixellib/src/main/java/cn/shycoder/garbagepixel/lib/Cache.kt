@@ -75,6 +75,9 @@ class Cache(context: Context) {
         }
     }
 
+    /**
+     * 将Bitmap放入缓存中
+     * */
     fun put(key: String, bitmap: Bitmap) {
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
@@ -102,6 +105,15 @@ class Cache(context: Context) {
             }
         }
         return bitmap
+    }
+
+    /**
+     * 根据指定的key从磁盘缓存中得到相应的FileDescriptor
+     * */
+    fun getFD(key: String): FileDescriptor {
+        val snapshot = mDiskLruCache.get(key)
+        val inputStream = snapshot.getInputStream(DEFAULT_SNAPSHOT_INDEX) as FileInputStream
+        return inputStream.fd
     }
 
     /**

@@ -4,7 +4,7 @@ import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.ImageView
-import cn.shycoder.garbagepixel.lib.utils.MD5Utils
+import cn.shycoder.garbagepixel.lib.utils.Utils
 
 class Request private constructor(
         private val pixel: Pixel,
@@ -15,7 +15,7 @@ class Request private constructor(
         val requestWidth: Int,
         val requestHeight: Int) {
 
-    private val TAG = Request::class.qualifiedName
+    private val TAG = Request::class.java.name
 
     val bitmapKey: BitmapKey = generateKey()
 
@@ -25,7 +25,7 @@ class Request private constructor(
     private fun generateKey(): BitmapKey {
         val buffer = StringBuffer()
         //标识
-        val originalKey = MD5Utils.decodeMD5(source.toString())
+        val originalKey = Utils.decodeMD5(source.toString())
         buffer.append(originalKey)
         //大小参数
         buffer.append("size_")
@@ -39,7 +39,7 @@ class Request private constructor(
         return BitmapKey(originalKey, processedKey)
     }
 
-    class RequestBuilder(private val pixel: Pixel, private val source: Any) {
+    class RequestBuilder constructor(private val pixel: Pixel, private val source: Any, val dispatcher: Dispatcher) {
         private var mLoadFrom: LoadFrom = LoadFrom.ANY
         private var mPlaceholderDrawable: Drawable? = null
         private var mErrorDrawable: Drawable? = null
@@ -92,7 +92,7 @@ class Request private constructor(
         /**
          * 将指定的Bitmap加载到ImageView上
          * */
-        fun to(target: ImageView) {
+        fun into(target: ImageView) {
             val measuredWidth = target.measuredWidth
             val measuredHeight = target.measuredHeight
             val request = Request(pixel,
@@ -102,7 +102,7 @@ class Request private constructor(
                     mErrorDrawable,
                     measuredWidth,
                     measuredHeight)
-
+            dispatcher.dispatchSubmit(Action(request.source, target, request))
         }
     }
 }

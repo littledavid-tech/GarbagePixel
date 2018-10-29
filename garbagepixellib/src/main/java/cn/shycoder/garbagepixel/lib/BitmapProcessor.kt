@@ -1,6 +1,7 @@
 package cn.shycoder.garbagepixel.lib
 
 import android.graphics.Bitmap
+import cn.shycoder.garbagepixel.lib.processors.NetworkBitmapProcessor
 import cn.shycoder.garbagepixel.lib.utils.ImageResizer
 import cn.shycoder.garbagepixel.lib.utils.safeClose
 import java.io.FileInputStream
@@ -8,7 +9,7 @@ import java.io.FileInputStream
 /**
  * Bitmap的处理者
  * */
-internal abstract class BitmapProcessor(
+abstract class BitmapProcessor(
         val pixel: Pixel,
         val dispatcher: Dispatcher,
         val request: Request,
@@ -61,9 +62,11 @@ internal abstract class BitmapProcessor(
     abstract fun decode(): Bitmap?
 
     companion object {
-        fun create(pixel: Pixel, dispatcher: Dispatcher, action: Action, request: Request): BitmapProcessor {
-//            if (action)
-            TODO()
+        fun create(pixel: Pixel, dispatcher: Dispatcher, action: Action): BitmapProcessor {
+            if (action.source is String) {
+                return NetworkBitmapProcessor(pixel, dispatcher, action.request, action, pixel.cache)
+            }
+            throw  IllegalArgumentException("Unknown bitmap source: action.source")
         }
     }
 }
