@@ -1,6 +1,7 @@
 package cn.shycoder.garbagepixel.lib
 
 import android.graphics.Bitmap
+import android.util.Log
 import cn.shycoder.garbagepixel.lib.processors.NetworkBitmapProcessor
 import cn.shycoder.garbagepixel.lib.utils.ImageResizer
 import cn.shycoder.garbagepixel.lib.utils.safeClose
@@ -15,12 +16,16 @@ abstract class BitmapProcessor(
         val request: Request,
         val action: Action,
         val cache: Cache) : Runnable {
+    private val TAG = BitmapProcessor::class.java.name
 
     var exception: Exception? = null
     var result: Bitmap? = null
 
     override fun run() {
         try {
+            if (!pixel.isDebugging()) {
+                Log.i(TAG, "Start thread to decode bitmap!")
+            }
             result = loadBitmap()
             //加载Bitmap失败
             if (result == null) {
@@ -35,6 +40,9 @@ abstract class BitmapProcessor(
     }
 
     private fun loadBitmap(): Bitmap? {
+        if (!pixel.isDebugging()) {
+            Log.i(TAG, "Load bitmap from cache!")
+        }
         //直接从来源获取Bitmap
         if (request.loadFrom == LoadFrom.SOURCE) {
             return decode()
