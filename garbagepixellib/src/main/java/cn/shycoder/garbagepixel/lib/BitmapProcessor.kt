@@ -52,17 +52,18 @@ abstract class BitmapProcessor(
         val bitmapKey = request.bitmapKey
         //从内存中取出Bitmap
         bitmap = cache.get(bitmapKey.processedKey)
-        if (bitmap == null) {
-            //检查缓存中是否具有原图
-            if (cache.isExistedInDiskCache(bitmapKey.originalKey)) {
-                //根据原图加载缩略图
-                val fileInputStream = FileInputStream(cache.toString())
-                val fd = fileInputStream.fd
-                val inSampledBitmap = ImageResizer.fromFileDescriptor(fd, request.requestWidth, request.requestHeight)
-                cache.put(request.bitmapKey.originalKey, inSampledBitmap)
-                fileInputStream.safeClose()
-                return inSampledBitmap
-            }
+        if (bitmap != null) {
+            return bitmap
+        }
+        //检查缓存中是否具有原图
+        if (cache.isExistedInDiskCache(bitmapKey.originalKey)) {
+            //根据原图加载缩略图
+            val fileInputStream = FileInputStream(cache.toString())
+            val fd = fileInputStream.fd
+            val inSampledBitmap = ImageResizer.fromFileDescriptor(fd, request.requestWidth, request.requestHeight)
+            cache.put(request.bitmapKey.originalKey, inSampledBitmap)
+            fileInputStream.safeClose()
+            return inSampledBitmap
         }
         return decode()
     }
