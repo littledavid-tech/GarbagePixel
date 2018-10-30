@@ -1,9 +1,11 @@
 package cn.shycoder.garbagepixel.lib
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v4.util.LruCache
+import android.util.Log
 import cn.shycoder.garbagepixel.lib.utils.safeClose
 import com.jakewharton.disklrucache.DiskLruCache
 import java.io.*
@@ -82,6 +84,7 @@ class Cache(context: Context) {
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
         put(key, ByteArrayInputStream(byteArrayOutputStream.toByteArray()))
+        byteArrayOutputStream.safeClose()
     }
 
     /**
@@ -130,6 +133,7 @@ class Cache(context: Context) {
 
     companion object {
 
+        @SuppressLint("StaticFieldLeak")
         private var mInstance: Cache? = null
 
         fun getInstance(context: Context): Cache {

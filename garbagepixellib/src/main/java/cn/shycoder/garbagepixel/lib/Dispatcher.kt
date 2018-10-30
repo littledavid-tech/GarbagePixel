@@ -57,6 +57,9 @@ class Dispatcher(
     }
 
     fun performSubmit(action: Action) {
+        if (pixel.isDebugging()) {
+            Log.i(TAG, "perform submit task")
+        }
         //设置占位符
         if (action.request.placeholderDrawable != null) {
             mainHandler.post {

@@ -23,7 +23,7 @@ abstract class BitmapProcessor(
 
     override fun run() {
         try {
-            if (!pixel.isDebugging()) {
+            if (pixel.isDebugging()) {
                 Log.i(TAG, "Start thread to decode bitmap!")
             }
             result = loadBitmap()
@@ -40,7 +40,7 @@ abstract class BitmapProcessor(
     }
 
     private fun loadBitmap(): Bitmap? {
-        if (!pixel.isDebugging()) {
+        if (pixel.isDebugging()) {
             Log.i(TAG, "Load bitmap from cache!")
         }
         //直接从来源获取Bitmap

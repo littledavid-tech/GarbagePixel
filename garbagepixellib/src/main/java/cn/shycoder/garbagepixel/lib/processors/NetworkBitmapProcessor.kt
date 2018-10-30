@@ -1,10 +1,12 @@
 package cn.shycoder.garbagepixel.lib.processors
 
 import android.graphics.Bitmap
+import android.nfc.Tag
 import android.util.Log
 import cn.shycoder.garbagepixel.lib.*
 import cn.shycoder.garbagepixel.lib.utils.ImageResizer
 import cn.shycoder.garbagepixel.lib.utils.Utils
+import cn.shycoder.garbagepixel.lib.utils.safeClose
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.InputStream
@@ -20,15 +22,18 @@ internal class NetworkBitmapProcessor
     private val TAG = NetworkBitmapProcessor::class.java.name
 
     override fun decode(): Bitmap? {
-        if (!Utils.networkAvailable(pixel.context)) {
-            return null
+
+        if (pixel.isDebugging()) {
+            Log.i(TAG, "decode from network!${action.source.toString()}")
         }
+        //检查网络状态,此方法需要 访问网络状态的权限
+//        if (!Utils.networkAvailable(pixel.context)) {
+//            return null
+//        }
         try {
-            if (!pixel.isDebugging()) {
-                Log.i(TAG, "decode from network!${action.source.toString()}")
-            }
             return decodeStream(URL(request.source.toString()).openStream())
         } catch (ex: Exception) {
+            ex.printStackTrace()
             throw  ex
         }
     }
@@ -38,14 +43,21 @@ internal class NetworkBitmapProcessor
             Log.i(TAG, "Decode from network stream!")
         }
         //将从网络中下载的图片放入磁盘缓存中
+        if (pixel.isDebugging()) {
+            Log.i(TAG, "put bitmap into cache")
+        }
         val originalKey = request.bitmapKey.originalKey
         cache.put(originalKey, inputStream)
-        inputStream.close()
+        inputStream.safeClose()
+
         //判断磁盘缓存中是否存在指定的文件
         if (!cache.isExistedInDiskCache(originalKey)) {
+            Log.e(TAG, "Failed to store bitmap into disk cache")
             return null
         }
-
+        if (pixel.isDebugging()) {
+            Log.i(TAG, "Bitmap has been putted into disk cache!")
+        }
         val fd = cache.getFD(originalKey)
         val bitmap = ImageResizer.fromFileDescriptor(fd, request.requestWidth, request.requestHeight)
         cache.put(request.bitmapKey.processedKey, bitmap)
