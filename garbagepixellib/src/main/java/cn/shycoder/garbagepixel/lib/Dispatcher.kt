@@ -90,7 +90,7 @@ class Dispatcher(
 
     }
 
-    class DispatcherHandler(looper: Looper, val dispatcher: Dispatcher) : Handler(looper) {
+    class DispatcherHandler(looper: Looper, private val dispatcher: Dispatcher) : Handler(looper) {
         override fun handleMessage(msg: Message?) {
             when (msg!!.what) {
                 MSG_TASK_SUBMIT -> {
