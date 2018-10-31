@@ -7,10 +7,10 @@
     android:orientation="vertical"
     tools:context="cn.shycoder.garbagepixel.app.MainActivity">
 
-    <ImageView
-        android:id="@+id/ivWallBack"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+    <!--<ImageView-->
+    <!--android:id="@+id/ivWallBack"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="200dp" />-->
 
     <GridView
         android:id="@+id/gvImg"

@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        Pixel.with(this).from(R.drawable.background).into(ivWallBack)
+        // Pixel.with(this).from(R.drawable.background).into(ivWallBack)
 
         val list = listOf<String>("https://alpha.wallhaven.cc/wallpapers/thumb/small/th-91620.jpg",
                 "https://alpha.wallhaven.cc/wallpapers/thumb/small/th-85647.jpg",

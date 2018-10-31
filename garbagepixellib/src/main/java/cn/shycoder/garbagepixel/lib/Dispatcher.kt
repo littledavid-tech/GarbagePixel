@@ -104,7 +104,7 @@ class Dispatcher(
     /**
      * 任务调度者的Handler，通过此Handler对接收的消息进行分发
      * */
-    class DispatcherHandler(looper: Looper, val dispatcher: Dispatcher) : Handler(looper) {
+    class DispatcherHandler(looper: Looper, private val dispatcher: Dispatcher) : Handler(looper) {
         override fun handleMessage(msg: Message?) {
             when (msg!!.what) {
                 MSG_TASK_SUBMIT -> {

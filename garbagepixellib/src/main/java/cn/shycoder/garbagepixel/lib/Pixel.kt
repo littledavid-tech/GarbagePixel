@@ -86,7 +86,6 @@ class Pixel private constructor(val context: Context,
     }
 
     private val dispatcher: Dispatcher = Dispatcher(this, context, executor, HANDLER, cache)
-
     /**
      * ImageView 和 Action的映射
      * */

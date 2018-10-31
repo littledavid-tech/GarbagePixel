@@ -52,7 +52,7 @@ abstract class BitmapProcessor(
             return decode()
         }
         //从缓存中获取Bitmap
-        var bitmap: Bitmap? = null
+        var bitmap: Bitmap?
         val bitmapKey = request.bitmapKey
         //从内存中取出Bitmap
         bitmap = cache.get(bitmapKey.processedKey)
