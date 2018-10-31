@@ -30,12 +30,14 @@ internal class NetworkBitmapProcessor
 //        if (!Utils.networkAvailable(pixel.context)) {
 //            return null
 //        }
-        try {
-            return decodeStream(URL(request.source.toString()).openStream())
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            throw  ex
-        }
+//        try {
+//            return decodeStream(URL(request.source.toString()).openStream())
+//        } catch (ex: Exception) {
+//            ex.printStackTrace()
+//            throw  ex
+//        }
+        val inputStream = URL(request.source.toString()).openStream()
+        return decodeStream(inputStream)
     }
 
     private fun decodeStream(inputStream: InputStream): Bitmap? {

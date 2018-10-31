@@ -9,6 +9,7 @@ import android.os.Looper
 import android.os.Message
 import android.util.Log
 import java.util.concurrent.ThreadPoolExecutor
+import kotlin.math.atan
 
 
 /**
@@ -54,8 +55,12 @@ class Dispatcher(
         if (pixel.isDebugging()) {
             Log.e(TAG, "Task failed， Key:${bitmapProcessor.request.bitmapKey.processedKey}")
         }
+        mainHandler.sendMessage(mainHandler.obtainMessage(Pixel.MSG_ACTION_FAILED, bitmapProcessor))
     }
 
+    /**
+     * 提交一个加载Bitmap的任务
+     * */
     fun performSubmit(action: Action) {
         if (pixel.isDebugging()) {
             Log.i(TAG, "perform submit task")
@@ -73,11 +78,17 @@ class Dispatcher(
             }
         }
 
+        pixel.put(action.target.get(), action)
+
         executor.submit(BitmapProcessor.create(pixel, this, action))
     }
 
     fun performComplete(bitmapProcessor: BitmapProcessor) {
         mainHandler.sendMessage(mainHandler.obtainMessage(Pixel.MSG_ACTION_COMPELETE, bitmapProcessor))
+    }
+
+    fun performFailed(bitmapProcessor: BitmapProcessor) {
+        mainHandler.sendMessage(mainHandler.obtainMessage(Pixel.MSG_ACTION_FAILED, bitmapProcessor))
     }
 
     companion object {
@@ -90,6 +101,9 @@ class Dispatcher(
 
     }
 
+    /**
+     * 任务调度者的Handler，通过此Handler对接收的消息进行分发
+     * */
     class DispatcherHandler(looper: Looper, val dispatcher: Dispatcher) : Handler(looper) {
         override fun handleMessage(msg: Message?) {
             when (msg!!.what) {
@@ -100,10 +114,10 @@ class Dispatcher(
                     dispatcher.performComplete(msg.obj as BitmapProcessor)
                 }
                 MSG_TASK_FAILED -> {
-
+                    dispatcher.performFailed(msg.obj as BitmapProcessor)
                 }
                 else -> {
-
+                    throw  IllegalArgumentException("Unknown message")
                 }
             }
         }

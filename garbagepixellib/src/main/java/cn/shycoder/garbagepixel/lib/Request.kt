@@ -44,27 +44,31 @@ class Request private constructor(
         private var mPlaceholderDrawable: Drawable? = null
         private var mErrorDrawable: Drawable? = null
 
-        fun loadFrom(loadFrom: LoadFrom) {
+        fun loadFrom(loadFrom: LoadFrom): RequestBuilder {
             mLoadFrom = loadFrom
+            return this
         }
 
         /**
          * 设置ImageView的占位符Drawable,当加载Bitmap之前，显示在ImageView的Drawable
          * */
-        fun placeholder(drawable: Drawable) {
+        fun placeholder(drawable: Drawable): RequestBuilder {
             this.mPlaceholderDrawable = drawable
+            return this
         }
 
         /**
          * 设置ImageView的占位符Drawable,当加载Bitmap之前，显示在ImageView的Drawable
          * */
-        fun placeholder(drawableId: Int) {
+        fun placeholder(drawableId: Int): RequestBuilder {
             try {
                 val drawable = pixel.context.resources.getDrawable(drawableId)
                 this.mPlaceholderDrawable = drawable
+                return this
             } catch (ex: Resources.NotFoundException) {
                 mPlaceholderDrawable = null
                 ex.printStackTrace()
+                return this
             }
         }
 
@@ -72,21 +76,24 @@ class Request private constructor(
          * 设置当发生错误的时候显示的Drawable
          * @param drawableId drawable 的资源ID
          * */
-        fun error(drawableId: Int) {
+        fun error(drawableId: Int): RequestBuilder {
             try {
                 val drawable = pixel.context.resources.getDrawable(drawableId)
                 this.mErrorDrawable = drawable
+                return this
             } catch (ex: Resources.NotFoundException) {
                 mErrorDrawable = null
                 ex.printStackTrace()
+                return this
             }
         }
 
         /**
          * 设置当发生错误的时候显示的Drawable
          * */
-        fun error(drawable: Drawable) {
+        fun error(drawable: Drawable): RequestBuilder {
             this.mErrorDrawable = drawable
+            return this
         }
 
         /**

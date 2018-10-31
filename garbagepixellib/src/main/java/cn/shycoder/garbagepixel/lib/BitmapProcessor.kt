@@ -2,6 +2,7 @@ package cn.shycoder.garbagepixel.lib
 
 import android.graphics.Bitmap
 import android.util.Log
+import cn.shycoder.garbagepixel.lib.processors.DrawableBitmapProcessor
 import cn.shycoder.garbagepixel.lib.processors.NetworkBitmapProcessor
 import cn.shycoder.garbagepixel.lib.utils.ImageResizer
 import cn.shycoder.garbagepixel.lib.utils.safeClose
@@ -39,6 +40,9 @@ abstract class BitmapProcessor(
         }
     }
 
+    /**
+     * 优先地从缓存中加载Bitmap，如果没有则会调用 #decode() 方法从来源加载Bitmap
+     * */
     private fun loadBitmap(): Bitmap? {
         if (pixel.isDebugging()) {
             Log.i(TAG, "Load bitmap from cache!")
@@ -58,7 +62,7 @@ abstract class BitmapProcessor(
         //检查缓存中是否具有原图
         if (cache.isExistedInDiskCache(bitmapKey.originalKey)) {
             //根据原图加载缩略图
-            val fileInputStream = FileInputStream(cache.toString())
+            val fileInputStream = FileInputStream(cache.getFD(bitmapKey.originalKey))
             val fd = fileInputStream.fd
             val inSampledBitmap = ImageResizer.fromFileDescriptor(fd, request.requestWidth, request.requestHeight)
             cache.put(request.bitmapKey.originalKey, inSampledBitmap)
@@ -68,12 +72,20 @@ abstract class BitmapProcessor(
         return decode()
     }
 
+    /**
+     * 从Bitmap的来源直接解析Bitmap
+     * */
     abstract fun decode(): Bitmap?
 
     companion object {
+        /**
+         * 根据数据的来源，创建不同的Processor来加载Bitmap
+         * */
         fun create(pixel: Pixel, dispatcher: Dispatcher, action: Action): BitmapProcessor {
             if (action.source is String) {
                 return NetworkBitmapProcessor(pixel, dispatcher, action.request, action, pixel.cache)
+            } else if (action.source is Int) {
+                return DrawableBitmapProcessor(pixel, dispatcher, action.request, action, pixel.cache)
             }
             throw  IllegalArgumentException("Unknown bitmap source: action.source")
         }
